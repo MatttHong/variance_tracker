@@ -6,25 +6,7 @@
         "direction": "in",
         "name": "req",
         "methods": ["get"],
-        "route": "get-function"  
-      },
-      {
-        "type": "http",
-        "direction": "out",
-        "name": "res"
-      }
-    ]
-  }
-  
-  {
-    "bindings": [
-      {
-        "authLevel": "function",
-        "type": "httpTrigger",
-        "direction": "in",
-        "name": "req",
-        "methods": ["post"],
-        "route": "post-function"  // Customize the route as needed
+        "route": "hello" 
       },
       {
         "type": "http",
