@@ -8,7 +8,6 @@ on:
   push:
     branches:
       - main
-runs-on: ubuntu-latest
   workflow_dispatch:
 
 env:
@@ -19,11 +18,11 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Set up Node.js 16.x
-        uses: actions/setup-node@v2
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Setup Python version
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v1
         with:
           python-version: ${{ env.PYTHON_VERSION }}
 
