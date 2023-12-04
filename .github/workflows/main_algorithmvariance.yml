@@ -1,7 +1,3 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/azure/functions-action
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure Functions: https://aka.ms/python-webapps-actions
-
 name: Build and deploy Python project to Azure Function App - algorithmvariance
 
 on:
@@ -11,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./" # Path to the directory containing your Azure Function App code
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # Set this to the root of your repository
   PYTHON_VERSION: "3.11" # Set the Python version to use (supports 3.6, 3.7, 3.8)
 
 jobs:
@@ -36,16 +32,22 @@ jobs:
 
       # Optional: Add step to run tests here
 
+      - name: Prepare deployment artifact
+        run: |
+          mkdir -p deploy
+          cp -r GetPostFunction deploy/
+          cp -r shared_code deploy/
+          cp -r requirements.txt deploy/
+          cp main.py deploy/
+
       - name: Zip artifact for deployment
-        run: zip release.zip ./* -r
+        run: zip -r release.zip ./deploy/*
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
         with:
           name: python-app
-          path: |
-            release.zip
-            !venv/
+          path: release.zip
 
   deploy:
     runs-on: ubuntu-latest
@@ -69,7 +71,7 @@ jobs:
         with:
           app-name: "algorithmvariance"
           slot-name: "Production"
-          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
+          package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B68436736FD84B19B1A2D571856B9240 }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
