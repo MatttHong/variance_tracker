@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./variance_tracker"
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "./github"
   PYTHON_VERSION: "3.11"
   # set this to the python version to use (supports 3.6, 3.7, 3.8)
 
