@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: "." # Set this to the root of your repository
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: "variance_tracker/GetPostFunction" # Set this to the path to your Azure Function code, relative to the repository root
   PYTHON_VERSION: "3.11" # Set the Python version to use (supports 3.6, 3.7, 3.8)
 
 jobs:
@@ -32,23 +32,6 @@ jobs:
 
       # Optional: Add step to run tests here
 
-      - name: Prepare deployment artifact
-        run: |
-          mkdir -p deploy
-          cp -r GetPostFunction deploy/
-          cp -r shared_code deploy/
-          cp -r requirements.txt deploy/
-          cp main.py deploy/
-
-      - name: Zip artifact for deployment
-        run: zip -r release.zip ./deploy/*
-
-      - name: Upload artifact for deployment job
-        uses: actions/upload-artifact@v3
-        with:
-          name: python-app
-          path: release.zip
-
   deploy:
     runs-on: ubuntu-latest
     needs: build
@@ -57,21 +40,13 @@ jobs:
       url: ${{ steps.deploy-to-function.outputs.webapp-url }}
 
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v3
-        with:
-          name: python-app
-
-      - name: Unzip artifact for deployment
-        run: unzip release.zip
-
       - name: "Deploy to Azure Functions"
         uses: Azure/functions-action@v1
         id: deploy-to-function
         with:
           app-name: "algorithmvariance"
           slot-name: "Production"
-          package: .
+          package: ${{ env.AZURE_FUNCTIONAPP_PACKAGE_PATH }}
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B68436736FD84B19B1A2D571856B9240 }}
           scm-do-build-during-deployment: true
           enable-oryx-build: true
